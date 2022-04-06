@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import abi from "./utils/WavePortal.json";
 
 const App = () => {
 
@@ -8,6 +9,12 @@ const App = () => {
   * Just a state variable we use to store our user's public wallet.
   */
   const [currentAccount, setCurrentAccount] = useState("");
+
+  // The contract address from when we deployed the contract.
+  const contractAddress = "0x4F22481CfDd70B8B87f4D1eBbE591feDc5919ac0";
+
+  // References the ABI json file from src/utils/WavePortal.json
+  const contractABI = abi.abi;
 
 
   const checkIfWalletIsConnected = () => {
@@ -64,6 +71,7 @@ const App = () => {
   }
 
   const wave = async () => {
+    alert("Wave!");
     try {
       const { ethereum } = window;
 
@@ -76,11 +84,20 @@ const App = () => {
         const signer = provider.getSigner();
 
         // Get the contract instance
-        const WavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
         
         // call the public function from the contract
-        let count = await WavePortalContract.getTotalWaves();
-        console.log("Retrieved total wave count...", count.toNumber());        
+        let count = await wavePortalContract.getTotalWaves();
+        console.log("Retrieved total wave count...", count.toNumber()); 
+        
+        const waveTxn = await wavePortalContract.wave();
+        console.log("Mining transaction... ", waveTxn.hash);
+
+        await waveTxn.wait();
+        console.log("Transaction mined... ", waveTxn.hash);
+
+        count = await wavePortalContract.getTotalWaves();
+        console.log("Retrieved total wave count...", count.toNumber()); 
       } else {
         console.log("Ethereum object doesn't exist!");
       }
@@ -94,6 +111,7 @@ const App = () => {
   */
   useEffect(() => {
     checkIfWalletIsConnected();
+    connectWallet();
   }, [])
 
   return (
@@ -104,7 +122,7 @@ const App = () => {
         </div>
 
         <div className="bio">
-          I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
+          Lorem Ipsum Dipsum Wipsum Fipsum Gipsum Zipsum Lipsum
         </div>
 
         {currentAccount && (
