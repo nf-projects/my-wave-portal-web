@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 
@@ -62,6 +63,32 @@ const App = () => {
     }
   }
 
+  const wave = async () => {
+    try {
+      const { ethereum } = window;
+
+      if(ethereum) {
+        // using ethers.js to interact with the blockchain
+        // a provider is a way to "talk" to the ethereum nodes
+        const provider = new ethers.providers.Web3Provider(ethereum);
+
+        // a signer is like an account to sign transactions
+        const signer = provider.getSigner();
+
+        // Get the contract instance
+        const WavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+        
+        // call the public function from the contract
+        let count = await WavePortalContract.getTotalWaves();
+        console.log("Retrieved total wave count...", count.toNumber());        
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   /*
   * This runs our function when the page loads.
   */
@@ -81,7 +108,7 @@ const App = () => {
         </div>
 
         {currentAccount && (
-        <button className="waveButton" onClick={null}>
+        <button className="waveButton" onClick={wave}>
           Wave at Me
         </button>
         )}
