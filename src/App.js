@@ -10,6 +10,9 @@ const App = () => {
   */
   const [currentAccount, setCurrentAccount] = useState("");
 
+  // All state property to store all the waves
+  const [allWaves, setAllWaves] = useState([]);
+
   // The contract address from when we deployed the contract.
   const contractAddress = "0xA063EaB0AF620Bc80107E7a1498FDb33bFD2eaD0";
 
@@ -101,6 +104,36 @@ const App = () => {
       } else {
         console.log("Ethereum object doesn't exist!");
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const getAllWaves = async () => {
+    try {
+      const {ethereum} = window;
+      if(ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+        // Call the allWaves function from the contract
+        const waves = await wavePortalContract.getAllWaves();
+
+        // Pick out address, timestamp, and message from the returned array
+        let wavesCleaned = [];
+        waves.forEach(wave => {
+          wavesCleaned.push({
+            address: wave.waver,
+            timestamp: new Date(wave.timestamp * 1000),
+            message: wave.message
+          });
+      });
+
+      setAllWaves(wavesCleaned);
+    } else {
+      console.log("Ethereum object doesn't exist!");
+    }
     } catch (error) {
       console.log(error);
     }
