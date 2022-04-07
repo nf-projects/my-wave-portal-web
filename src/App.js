@@ -11,7 +11,7 @@ const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
 
   // The contract address from when we deployed the contract.
-  const contractAddress = "0x4F22481CfDd70B8B87f4D1eBbE591feDc5919ac0";
+  const contractAddress = "0xA063EaB0AF620Bc80107E7a1498FDb33bFD2eaD0";
 
   // References the ABI json file from src/utils/WavePortal.json
   const contractABI = abi.abi;
