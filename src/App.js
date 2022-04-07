@@ -47,6 +47,7 @@ const App = () => {
           const account = accounts[0];
           console.log("Found an authorized account:", account);
           setCurrentAccount(account)
+          getAllWaves();
         } else {
           console.log("No authorized account found")
           //alert("No authorized MetaMask account found!")
@@ -93,7 +94,7 @@ const App = () => {
         let count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber()); 
         
-        const waveTxn = await wavePortalContract.wave();
+        const waveTxn = await wavePortalContract.wave("this is a message!");
         console.log("Mining transaction... ", waveTxn.hash);
 
         await waveTxn.wait();
@@ -172,6 +173,17 @@ const App = () => {
             Connect Wallet
           </button>
         )}
+
+        {allWaves.map((wave, index) => {
+          return (
+            <div key={index} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+              <div>Address: {wave.address}</div>
+              <div>Time: {wave.timestamp.toString()}</div>
+              <div>Message: {wave.message}</div>
+            </div>)
+        })}
+
+
       </div>
     </div>
   );
