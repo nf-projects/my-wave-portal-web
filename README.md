@@ -1,5 +1,5 @@
 # Installing
 1. Clone repo
-2. `npx create-react-app my-app`
+2. `cd my-wave-portal-web`
 3. `npm install`
-4. `npm start` (takes a few minutes the first time)
+4. `npm start`
