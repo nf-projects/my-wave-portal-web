@@ -14,7 +14,7 @@ const App = () => {
   const [allWaves, setAllWaves] = useState([]);
 
   // The contract address from when we deployed the contract.
-  const contractAddress = "0xA063EaB0AF620Bc80107E7a1498FDb33bFD2eaD0";
+  const contractAddress = "0x110A52A66e9068d58a8B70bF2B019F95644F2402";
 
   // References the ABI json file from src/utils/WavePortal.json
   const contractABI = abi.abi;
@@ -144,9 +144,34 @@ const App = () => {
   * This runs our function when the page loads.
   */
   useEffect(() => {
-    checkIfWalletIsConnected();
-    connectWallet();
-  }, [])
+    let wavePortalContract
+
+    const onNewWave = (from, timestamp, message) => {
+      console.log("New wave received: awdawdawdawdawdawd", from, timestamp, message);
+      setAllWaves([
+        ...allWaves,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message: message
+        }
+      ]);
+  };
+
+  if(window.ethereum) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    wavePortalContract = new ethers.Contract(contractAddress, contractABI, signer);
+    wavePortalContract.on("NewWave", onNewWave);
+  }
+
+  return () => {
+    if(wavePortalContract) {
+      wavePortalContract.off("NewWave", onNewWave);
+    }
+  };
+}, []);
 
   return (
     <div className="mainContainer">
